@@ -1,0 +1,39 @@
+# Маніфест проєкту. Чекер читає звідси назви — сам він їх не вгадує.
+# Заповнюється поступово: розділи product і server — заняття 01,
+# endpoints — 02 і 05, database — 04, pages — 06, auth — 07.
+
+product:
+  name: "MARMAdrive"            # назва продукту, має бути видно на сторінці
+  author: "Artemikaser"                # ім'я БЕЗ прізвища або нік
+  target_user: "хто цим користуватиметься, крім мене"
+  features: []                  # три функції MVP із BRIEF.md
+
+server:
+  subdomain: artem.g15
+  url: "https://artem.g15.91.219.61.4/"
+
+database:                       # заняття 04
+  file: app.db
+  main_table: ""                # головна таблиця, яку показує список
+  main_table_pk: id
+  main_table_required: []       # поля NOT NULL
+  secondary_tables: []
+
+endpoints:
+  ping: "GET /api/ping"
+  about: "GET /api/about"
+  list: ""                      # заняття 04
+  create: ""                    # заняття 05
+  delete: ""                    # заняття 05
+  login: ""                     # заняття 07
+
+pages:                          # заняття 06
+  index: "/"
+  list_container: ""
+  item: ""
+  empty_state: ""
+  form: ""
+
+auth:                           # заняття 07
+  table: ""
+  password_field: ""

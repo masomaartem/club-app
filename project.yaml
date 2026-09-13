@@ -1,0 +1,44 @@
+# Маніфест проєкту. Чекер читає звідси назви — сам він їх не вгадує.
+# Заповнюється поступово: розділи product і server — заняття 01,
+# endpoints — 02 і 05, database — 04, pages — 06, auth — 07.
+
+product:
+  name: "MARMAdrive"
+  author: "Артем"
+  target_user: "Сергій, 40 років, професійний дегустатор пива та сомельє"
+  features:
+    - "Збереження та приватність: додавання посилань з назвою та тегами (за замовчуванням приватні)"
+    - "Генерація публічного доступу (Google Drive style): short-link для шерингу добірок"
+    - "Дашборд і пошук: перегляд закладок у порядку додавання з фільтрацією за доступом"
+
+server:
+  subdomain: artem.g15
+  url: "https://artem.g15.91.219.61.4/"
+
+database:                       # заняття 04
+  file: app.db
+  main_table: ""                # головна таблиця, яку показує список
+  main_table_pk: id
+  main_table_required: []       # поля NOT NULL
+  secondary_tables: []
+
+endpoints:
+  ping: "GET /api/ping"
+  about: "GET /api/about"
+  user: "GET /api/user"
+  plan: "GET /api/plan"
+  list: ""                      # заняття 04
+  create: ""                    # заняття 05
+  delete: ""                    # заняття 05
+  login: ""                     # заняття 07
+
+pages:                          # заняття 06
+  index: "/"
+  list_container: ""
+  item: ""
+  empty_state: ""
+  form: ""
+
+auth:                           # заняття 07
+  table: ""
+  password_field: ""
