@@ -15,30 +15,16 @@ server:
   subdomain: artem.g15
   url: "https://artem.g15.91.219.61.4/"
 
-database:                       # заняття 04
+database:                         # заняття 04
   file: app.db
-  main_table: ""                # головна таблиця, яку показує список
+  main_table: "links"             # головна таблиця для збереження закладок
   main_table_pk: id
-  main_table_required: []       # поля NOT NULL
-  secondary_tables: []
+  main_table_required:
+    - title
+    - url
+  secondary_tables:
+    - users
+    - folders
 
 endpoints:
   ping: "GET /api/ping"
-  about: "GET /api/about"
-  user: "GET /api/user"
-  plan: "GET /api/plan"
-  list: ""                      # заняття 04
-  create: ""                    # заняття 05
-  delete: ""                    # заняття 05
-  login: ""                     # заняття 07
-
-pages:                          # заняття 06
-  index: "/"
-  list_container: ""
-  item: ""
-  empty_state: ""
-  form: ""
-
-auth:                           # заняття 07
-  table: ""
-  password_field: ""
