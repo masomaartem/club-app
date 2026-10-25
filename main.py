@@ -4,18 +4,29 @@
 Заняття 04 — додається GET списку.
 Заняття 05 — додаються POST і DELETE.
 """
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import yaml
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+import bot
 from db import query  # готова заготовка, не редагуємо
 
 BASE = Path(__file__).parent
 CFG = yaml.safe_load((BASE / "project.yaml").read_text(encoding="utf-8"))
 
-app = FastAPI(title=CFG["product"]["name"])
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    stop = bot.start_polling()              # бот живе стільки ж, скільки служба
+    yield
+    if stop:
+        stop.set()
+
+
+app = FastAPI(title=CFG["product"]["name"], lifespan=lifespan)
 
 
 @app.get("/api/ping")
@@ -60,29 +71,6 @@ def plan():
             "реалізувати дашборд зі швидким пошуком та Google Drive style short-links (заняття 06)",
         ],
     }
-
-
-# ─────────────────────────────────────────────────────────────
-# ЗАНЯТТЯ 04. Розкоментуй і заміни habit на links для MARMAdrive.
-# ─────────────────────────────────────────────────────────────
-# @app.get("/api/links")
-# def list_items():
-#     return query("SELECT * FROM links ORDER BY id DESC")
-
-
-# ─────────────────────────────────────────────────────────────
-# ЗАНЯТТЯ 05. Додавання й видалення закладок.
-# ─────────────────────────────────────────────────────────────
-# from pydantic import BaseModel, Field
-#
-# class NewItem(BaseModel):
-#     title: str = Field(min_length=1, max_length=200)
-#     url: str
-#     is_public: bool = False
-#
-# @app.post("/api/links")
-# def create_item(item: NewItem):
-#     ...
 
 
 @app.exception_handler(404)

@@ -2,7 +2,10 @@
 
 Учень пише лише SQL у своїх ендпоінтах, а підключення, закриття
 з'єднання й перетворення рядків у JSON бере звідси.
+APP_DB у змінних оточення підставляє іншу базу — так тести (заняття 09)
+не чіпають справжню.
 """
+import os
 import sqlite3
 from pathlib import Path
 
@@ -10,11 +13,11 @@ import yaml
 
 BASE = Path(__file__).parent
 CFG = yaml.safe_load((BASE / "project.yaml").read_text(encoding="utf-8"))
-DB_PATH = Path.home() / "data" / CFG["database"]["file"]
+DB_PATH = Path(os.environ.get("APP_DB") or Path.home() / "data" / CFG["database"]["file"])
 
 
 def connect():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row          # щоб рядок став схожим на словник
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
@@ -36,3 +39,11 @@ def execute(sql, params=()):
         cur = conn.execute(sql, params)
         conn.commit()
         return cur.lastrowid
+
+
+def changed(sql, params=()):
+    """UPDATE / DELETE: скільки рядків змінилося (0 — такого запису немає)."""
+    with connect() as conn:
+        cur = conn.execute(sql, params)
+        conn.commit()
+        return cur.rowcount
