@@ -1,0 +1,31 @@
+[Unit]
+Description=Навчальний API учня artem.g15
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/artem.g15/app
+ExecStart=/opt/club/venv/bin/uvicorn main:app --host 127.0.0.1 --port 9533
+
+# Restart=always стоїть тут із першого дня курсу (заняття 02).
+# На занятті 11 учень не додає цей рядок, а розбирає, чому він потрібен.
+Restart=always
+RestartSec=3
+
+# Обмеження: один нескінченний цикл не має зупиняти роботу всій групі
+MemoryMax=200M
+CPUQuota=25%
+TasksMax=64
+
+# Пісочниця: учень не дістає до чужих тек
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=no
+ReadWritePaths=/home/artem.g15/app /home/artem.g15/data /home/artem.g15/logs /home/artem.g15/backups
+NoNewPrivileges=true
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

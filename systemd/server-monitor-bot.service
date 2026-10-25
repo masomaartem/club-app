@@ -1,0 +1,16 @@
+[Unit]
+Description=Telegram Server Monitor Bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/artem.g15/server_monitor_bot
+ExecStart=/home/artem.g15/server_monitor_bot/venv/bin/python3 -u /home/artem.g15/server_monitor_bot/bot.py
+Restart=always
+RestartSec=5
+
+StandardOutput=append:/home/artem.g15/server_monitor_bot/bot.log
+StandardError=append:/home/artem.g15/server_monitor_bot/bot.log
+
+[Install]
+WantedBy=default.target

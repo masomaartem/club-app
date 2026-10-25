@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Масьома Артем — Dev & Tech · MARMAdrive</title>
+  <style>
+    :root {
+      --bg-color: #0d0d0d;
+      --card-bg: #171717;
+      --orange-main: #ff6b00;
+      --orange-accent: #ff8c00;
+      --text-main: #f5f5f5;
+      --text-muted: #a3a3a3;
+      --border-color: #262626;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 650px;
+      width: 100%;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(255, 107, 0, 0.1);
+      border: 1px solid var(--border-color);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 0;
+      color: var(--orange-main);
+      text-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      color: var(--orange-accent);
+      margin-top: 1.8rem;
+      border-bottom: 2px solid rgba(255, 107, 0, 0.2);
+      padding-bottom: 0.4rem;
+    }
+
+    p {
+      line-height: 1.6;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    a {
+      color: var(--orange-accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .tag-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag-list li {
+      background: rgba(255, 107, 0, 0.1);
+      color: var(--orange-main);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 107, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .tag-list li:hover {
+      background: var(--orange-main);
+      color: #000;
+      box-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Привіт, я Масьома Артем ⚡</h1>
+    <p>Мені 13. Заліпаю в комп'ютерні ігри та тащуся від того, як влаштоване «залізо» всередині ПК 🖥️</p>
+
+    <h2>Мої скіли 💻</h2>
+    <p>Упевнено верстаю базисні сайти на HTML & CSS, а зараз активно прокачуюся в Linux, DevOps та бекенд-розробці на Python.</p>
+
+    <h2>Мій проєкт — MARMAdrive 🚀</h2>
+    <p>Мій головний квест на цьому курсі — задеплоїти власний сервіс <strong>MARMAdrive</strong>, який буде працювати в мережі 24/7 та приносити реальну користь користувачам.</p>
+    <p>MARMAdrive — це спеціалізоване хмарне сховище посилань та закладок для професійного сомельє та дегустатора крафтового пива. Сервіс дозволяє безпечно зберігати приватну базу знань про рідкісні сорти й броварні, організовувати матеріали за тегами та генерувати публічні short-links (у стилі Google Drive) для надсилання колегам.</p>
+    <p>Бекенд побудовано на FastAPI і uvicorn під керуванням systemd, тому служба автоматично відновлюється навіть після аварійного перезавантаження.</p>
+
+    <h2>Ендпоінти сервісу 🔌</h2>
+    <ul class="tag-list">
+      <li><a href="/u/artem.g15/api/ping">/api/ping</a></li>
+      <li><a href="/u/artem.g15/api/about">/api/about</a></li>
+      <li><a href="/u/artem.g15/api/user">/api/user</a></li>
+      <li><a href="/u/artem.g15/api/plan">/api/plan</a></li>
+    </ul>
+
+    <h2>Топ-ігри 🎮</h2>
+    <ul class="tag-list">
+      <li>⛏️ Minecraft</li>
+      <li>🎯 Counter Strike</li>
+      <li>🌾 Stardew Valley</li>
+    </ul>
+  </main>
+</body>
+</html>

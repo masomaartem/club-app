@@ -1,0 +1,18 @@
+[Unit]
+Description=Telegram OpenRouter AI Bot with Context Compression
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/artem.g15/telegram_openrouter_bot
+ExecStart=/home/artem.g15/telegram_openrouter_bot/venv/bin/python3 -u /home/artem.g15/telegram_openrouter_bot/bot.py
+Restart=always
+RestartSec=5s
+Environment=PYTHONUNBUFFERED=1
+
+StandardOutput=append:/home/artem.g15/telegram_openrouter_bot/bot.log
+StandardError=append:/home/artem.g15/telegram_openrouter_bot/bot.log
+SyslogIdentifier=telegram-bot
+
+[Install]
+WantedBy=default.target
