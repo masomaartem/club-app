@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Адмінка бота</title>
+<style>
+  body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#f6f7f9;color:#18181b}
+  main{max-width:760px;margin:0 auto;padding:24px 16px}
+  form,.card{background:#fff;border:1px solid #e4e4e7;border-radius:12px;padding:16px;margin:12px 0}
+  label{display:block;font-weight:600;margin-top:8px}
+  input,textarea{width:100%;box-sizing:border-box;padding:8px;font:inherit;border:1px solid #d4d4d8;border-radius:8px}
+  button{margin-top:10px;padding:8px 14px;font:inherit;border-radius:8px;border:0;background:#5b5bd6;color:#fff;cursor:pointer}
+  button.del{background:#e5484d}
+  table{width:100%;border-collapse:collapse;background:#fff}
+  td,th{padding:8px;border-bottom:1px solid #e4e4e7;text-align:left;vertical-align:top}
+  .empty{color:#71717a;padding:16px}
+  #err{color:#c12a30;min-height:1.5em}
+</style>
+</head>
+<body>
+<main>
+  <h1>Адмінка бота</h1>
+  <p id="err" role="alert"></p>
+
+  <form id="login" hidden>
+    <h2>Вхід</h2>
+    <label for="l-login">Логін</label>
+    <input id="l-login" name="login" autocomplete="username" required>
+    <label for="l-pass">Пароль</label>
+    <input id="l-pass" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit">Увійти</button>
+  </form>
+
+  <section id="panel" hidden>
+    <form id="add">
+      <h2>Додати контакт</h2>
+      <label for="c-name">Ім'я</label>
+      <input id="c-name" name="name" maxlength="100" required>
+      <label for="c-note">Примітка</label>
+      <textarea id="c-note" name="note" maxlength="500" rows="2"></textarea>
+      <button type="submit">Додати</button>
+    </form>
+    <div class="card">
+      <h2>Хто писав боту</h2>
+      <table>
+        <thead><tr><th>Ім'я</th><th>Повідомлень</th><th>Востаннє</th><th>Примітка</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p class="empty" id="empty" hidden>Поки що боту ніхто не писав. Напиши йому сам — і тут з'явиться рядок.</p>
+    </div>
+    <button type="button" id="logout">Вийти</button>
+  </section>
+</main>
+<script>
+const API = "../api/";
+const $ = id => document.getElementById(id);
+
+async function call(path, options = {}) {
+  const r = await fetch(API + path, {credentials: "same-origin",
+    headers: {"Content-Type": "application/json"}, ...options});
+  if (r.status === 401) { show(false); throw new Error("Потрібен вхід"); }
+  const body = r.status === 204 ? null : await r.json();
+  if (!r.ok) throw new Error((body && (body.detail || body.error)) || ("помилка " + r.status));
+  return body;
+}
+
+function show(loggedIn) { $("login").hidden = loggedIn; $("panel").hidden = !loggedIn; }
+
+function cell(text) { const td = document.createElement("td"); td.textContent = text; return td; }
+
+async function load() {
+  const users = await call("users");
+  show(true);
+  const tbody = $("rows");
+  tbody.replaceChildren();
+  $("empty").hidden = users.length > 0;
+  for (const u of users) {
+    const tr = document.createElement("tr");
+    tr.append(cell(u.name + (u.username ? " (@" + u.username + ")" : "")),
+              cell(u.messages), cell(u.last_seen.replace("T", " ")), cell(u.note));
+    const td = document.createElement("td");
+    const edit = document.createElement("button");
+    edit.type = "button"; edit.textContent = "Примітка";
+    edit.onclick = async () => {
+      const note = prompt("Нова примітка для " + u.name, u.note);
+      if (note !== null) { await call("users/" + u.id, {method: "PATCH", body: JSON.stringify({note})}); load(); }
+    };
+    const del = document.createElement("button");
+    del.type = "button"; del.className = "del"; del.textContent = "Видалити";
+    del.onclick = async () => {
+      if (confirm("Видалити " + u.name + "?")) { await call("users/" + u.id, {method: "DELETE"}); load(); }
+    };
+    td.append(edit, " ", del);
+    tr.append(td);
+    tbody.append(tr);
+  }
+}
+
+function guard(fn) { return async e => { e && e.preventDefault(); $("err").textContent = "";
+  try { await fn(e); } catch (err) { $("err").textContent = err.message; } }; }
+
+$("login").onsubmit = guard(async () => {
+  await call("login", {method: "POST", body: JSON.stringify({login: $("l-login").value, password: $("l-pass").value})});
+  await load();
+});
+$("add").onsubmit = guard(async () => {
+  await call("users", {method: "POST", body: JSON.stringify({name: $("c-name").value, note: $("c-note").value})});
+  $("add").reset(); await load();
+});
+$("logout").onclick = guard(async () => { await call("logout", {method: "POST"}); show(false); });
+guard(load)();
+</script>
+</body>
+</html>

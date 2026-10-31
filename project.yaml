@@ -28,3 +28,7 @@ database:                         # заняття 04
 
 endpoints:
   ping: "GET /api/ping"
+  list: "GET /api/users"
+  create: "POST /api/users"
+  update: "PATCH /api/users/{id}"
+  delete: "DELETE /api/users/{id}"

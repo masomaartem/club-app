@@ -5,14 +5,16 @@
 Заняття 05 — додаються POST і DELETE.
 """
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
 
 import yaml
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, constr
 
 import bot
-from db import query  # готова заготовка, не редагуємо
+from db import changed, execute, query  # готова заготовка, не редагуємо
 
 BASE = Path(__file__).parent
 CFG = yaml.safe_load((BASE / "project.yaml").read_text(encoding="utf-8"))
@@ -27,6 +29,21 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=CFG["product"]["name"], lifespan=lifespan)
+
+NameValue = constr(strip_whitespace=True, min_length=1, max_length=100)
+NoteValue = constr(max_length=500)
+
+
+class UserInput(BaseModel):
+    name: NameValue
+    note: NoteValue = ""
+    username: str = ""
+
+
+class UserNoteInput(BaseModel):
+    note: NoteValue
+
+
 
 
 @app.get("/api/ping")
@@ -77,3 +94,45 @@ def plan():
 def not_found(request, exc):
     """Однаковий формат помилки для всього API — вимога контракту."""
     return JSONResponse({"error": "not_found"}, status_code=404)
+
+
+# Заняття 04–05: список контактів і керування ними з адмінки.
+@app.get("/api/users")
+def list_users():
+    return query(
+        """SELECT id, chat_id, name, username, note, first_seen, last_seen, messages
+           FROM users ORDER BY id"""
+    )
+
+
+@app.post("/api/users", status_code=201)
+def create_user(data: UserInput):
+    now = datetime.now().isoformat(timespec="seconds")
+    user_id = execute(
+        """INSERT INTO users(chat_id, name, username, note, first_seen, last_seen, messages)
+           VALUES(NULL, ?, ?, ?, ?, ?, 0)""",
+        (data.name, data.username.strip(), data.note, now, now),
+    )
+    return query(
+        """SELECT id, chat_id, name, username, note, first_seen, last_seen, messages
+           FROM users WHERE id = ?""",
+        (user_id,),
+    )[0]
+
+
+@app.patch("/api/users/{user_id}")
+def update_user(user_id: int, data: UserNoteInput):
+    if changed("UPDATE users SET note = ? WHERE id = ?", (data.note, user_id)) == 0:
+        raise HTTPException(status_code=404, detail="Контакт не знайдено")
+    return query(
+        """SELECT id, chat_id, name, username, note, first_seen, last_seen, messages
+           FROM users WHERE id = ?""",
+        (user_id,),
+    )[0]
+
+
+@app.delete("/api/users/{user_id}", status_code=204)
+def delete_user(user_id: int):
+    if changed("DELETE FROM users WHERE id = ?", (user_id,)) == 0:
+        raise HTTPException(status_code=404, detail="Контакт не знайдено")
+    return Response(status_code=204)
